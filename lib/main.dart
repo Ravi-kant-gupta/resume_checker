@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:resume_checker/widget/modern_ui.dart';
+import 'package:resume_checker/widget/multi_resume_mordern_ui.dart';
+// import 'package:resume_checker/widget/modern_ui.dart';
 // import 'package:resume_checker/pdf_screen.dart';
 
 
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
      debugShowCheckedModeBanner: false,
      title: 'Resume Skills Analyzer',
      theme: ThemeData(primarySwatch: Colors.blue),
+    //  home: const PDFReaderHome(),
      home: const PDFReaderHome(),
    );
  }

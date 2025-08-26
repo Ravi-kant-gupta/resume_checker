@@ -1,7 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'dart:io';
 
@@ -12,6 +12,7 @@ class PDFReaderHome extends StatefulWidget {
   const PDFReaderHome({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PDFReaderHomeState createState() => _PDFReaderHomeState();
 }
 
@@ -24,7 +25,6 @@ class _PDFReaderHomeState extends State<PDFReaderHome>
   String _pdfFileName = '';
   String? _pdfFilePath;
   bool _isLoading = false;
-  bool _showPreview = false;
   
   // Animation controllers
   late AnimationController _fabAnimationController;
@@ -35,7 +35,6 @@ class _PDFReaderHomeState extends State<PDFReaderHome>
   // Animations
   late Animation<double> _fabScaleAnimation;
   late Animation<Offset> _cardSlideAnimation;
-  late Animation<double> _skillsFadeAnimation;
   late Animation<double> _percentageAnimation;
   
   // PDF Preview related variables
@@ -94,13 +93,6 @@ class _PDFReaderHomeState extends State<PDFReaderHome>
       curve: Curves.easeOutCubic,
     ));
 
-    _skillsFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _skillsAnimationController,
-      curve: Curves.easeOut,
-    ));
 
     _percentageAnimation = Tween<double>(
       begin: 0.0,
@@ -293,7 +285,7 @@ double _calculateSimilarity(String a, String b) {
   final longer = a.length > b.length ? a : b;
   final shorter = a.length > b.length ? b : a;
   
-  if (longer.length == 0) return 1.0;
+  if (longer.isEmpty) return 1.0;
   
   return (longer.length - _levenshteinDistance(longer, shorter)) / longer.length;
 }
@@ -308,8 +300,12 @@ int _levenshteinDistance(String s1, String s2) {
     (i) => List.filled(s2.length + 1, 0)
   );
 
-  for (int i = 0; i <= s1.length; i++) matrix[i][0] = i;
-  for (int j = 0; j <= s2.length; j++) matrix[0][j] = j;
+  for (int i = 0; i <= s1.length; i++) {
+    matrix[i][0] = i;
+  }
+  for (int j = 0; j <= s2.length; j++) {
+    matrix[0][j] = j;
+  }
 
   for (int i = 1; i <= s1.length; i++) {
     for (int j = 1; j <= s2.length; j++) {
@@ -338,7 +334,7 @@ Future<void> _pickAndReadPDF() async {
 
   setState(() {
     _isLoading = true;
-    _showPreview = false; // Reset preview state
+// Reset preview state
     _nonMatchingSkills = []; // Reset non-matching skills
   });
 
@@ -407,7 +403,6 @@ Future<void> _pickAndReadPDF() async {
   } finally {
     setState(() {
       _isLoading = false;
-      _showPreview = _pdfText.isNotEmpty;
     });
   }
 }
@@ -415,22 +410,22 @@ Future<void> _pickAndReadPDF() async {
 // Widget to display non-matching skills in red color
 Widget buildNonMatchingSkillsWidget() {
   if (_nonMatchingSkills.isEmpty) {
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
   
   return Card(
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     elevation: 2,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     child: Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.red, size: 20),
-              SizedBox(width: 8),
+              const Icon(Icons.info_outline, color: Colors.red, size: 20),
+              const SizedBox(width: 8),
               Text(
                 'Additional Skills Found',
                 style: TextStyle(
@@ -441,7 +436,7 @@ Widget buildNonMatchingSkillsWidget() {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Skills present in PDF but not in your current requirements:',
             style: TextStyle(
@@ -449,12 +444,12 @@ Widget buildNonMatchingSkillsWidget() {
               color: Colors.grey[600],
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: _nonMatchingSkills.map((skill) => Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.red.withOpacity(0.1),
                 border: Border.all(color: Colors.red.withOpacity(0.5)),
@@ -470,7 +465,7 @@ Widget buildNonMatchingSkillsWidget() {
               ),
             )).toList(),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Consider adding these skills to your requirements if relevant.',
             style: TextStyle(
@@ -493,7 +488,6 @@ void _resetPdfState() {
     _pdfFilePath = null;
     _matchedPercentage = 0.0;
     _nonMatchingSkills = [];
-    _showPreview = false;
   });
 }
 
@@ -538,7 +532,6 @@ List<String> _nonMatchingSkills = [];
       _matchedPercentage = 0.0;
       _totalPages = 0;
       _currentPage = 0;
-      _showPreview = false;
     });
     _percentageAnimationController.reset();
   }
@@ -597,7 +590,7 @@ List<String> _nonMatchingSkills = [];
                       _buildSkillsSection(),
                       _buildAnalyticsSection(),
                       _buildContentSection(),
-                      SizedBox(height: 100,)
+                      const SizedBox(height: 100,)
                     ],
                   ),
                 ),
@@ -677,11 +670,11 @@ List<String> _nonMatchingSkills = [];
             ),
           ),
           const SizedBox(width: 16),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Resume Analyzer',
                   style: TextStyle(
                     color: Colors.white,
@@ -689,13 +682,6 @@ List<String> _nonMatchingSkills = [];
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                // Text(
-                //   'AI-Powered Skills Matching',
-                //   style: TextStyle(
-                //     color: Colors.white.withOpacity(0.7),
-                //     fontSize: 14,
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -708,8 +694,8 @@ List<String> _nonMatchingSkills = [];
                 content: Row(
                 children: [
                   Icon(Icons.lightbulb_outline_rounded, color: Colors.yellow[700]),
-                  SizedBox(width: 12),
-                  Expanded(
+                  const SizedBox(width: 12),
+                  const Expanded(
                   child: Text(
                     'AI feature coming soon!',
                     style: TextStyle(
@@ -721,43 +707,17 @@ List<String> _nonMatchingSkills = [];
                 ],
                 ),
                 backgroundColor: Colors.black87,
-                duration: Duration(seconds: 2),
+                duration: const Duration(seconds: 2),
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 ),
-                margin: EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
                 elevation: 8,
               ),
               );
             },
             )
-          //if (_pdfFilePath != null) ...[
-            // _buildHeaderAction(
-            //   Icons.preview_rounded,
-            //   _showPreview ? 'Text' : 'Preview',
-            //   () => setState(() => _showPreview = !_showPreview),
-            // ),
-            // const SizedBox(width: 8),
-            // _buildHeaderAction(
-            //   Icons.refresh_rounded,
-            //   'Refresh',
-            //   () async {
-            //     if (_pdfFilePath != null) {
-            //       _matchedPercentage = await _matchedItemsPercentage();
-            //       _percentageAnimationController.reset();
-            //       _percentageAnimationController.forward();
-            //       setState(() {});
-            //     }
-            //   },
-            // ),
-            // const SizedBox(width: 8),
-            // _buildHeaderAction(
-            //   Icons.clear_rounded,
-            //   'Clear',
-            //   _clearPDF,
-            // ),
-          //],
         ],
       ),
     );
@@ -874,16 +834,16 @@ List<String> _nonMatchingSkills = [];
             ),
           ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.add_rounded,
               color: Colors.white,
               size: 24,
             ),
-            const SizedBox(width: 8),
-            const Text(
+            SizedBox(width: 8),
+            Text(
               'Add Skill',
               style: TextStyle(
                 color: Colors.white,
@@ -950,8 +910,8 @@ List<String> _nonMatchingSkills = [];
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: _nonMatchingSkills.contains(skill)? 
-          [Color.fromARGB(255, 252, 29, 29), Color.fromARGB(255, 253, 4, 4)]:
-          [Color(0xFF00D4FF), Color(0xFF5B86E5)],
+          [const Color.fromARGB(255, 252, 29, 29), const Color.fromARGB(255, 253, 4, 4)]:
+          [const Color(0xFF00D4FF), const Color(0xFF5B86E5)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -1073,7 +1033,7 @@ List<String> _nonMatchingSkills = [];
                   'Refresh',
                   () async {
                     if (_pdfFilePath != null) {
-                      _matchedPercentage = await _calculateMatchPercentage();
+                      _matchedPercentage = _calculateMatchPercentage();
                       _percentageAnimationController.reset();
                       _percentageAnimationController.forward();
                       setState(() {});
@@ -1097,13 +1057,13 @@ List<String> _nonMatchingSkills = [];
       animation: _percentageAnimation,
       builder: (context, child) {
         double animatedPercentage = _percentageAnimation.value * _matchedPercentage;
-        return Container(
+        return SizedBox(
           height: 120,
           width: 120,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: 120,
                 width: 120,
                 child: CircularProgressIndicator(
@@ -1187,8 +1147,8 @@ List<String> _nonMatchingSkills = [];
           InkWell(
             onTap: _clearPDF,
             borderRadius: BorderRadius.circular(24),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Icon(
           Icons.clear,
           color: Colors.white,
@@ -1314,20 +1274,20 @@ List<String> _nonMatchingSkills = [];
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.description,
             size: 80,
             color: Colors.grey,
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'Select a PDF file to analyze',
             style: TextStyle(
               fontSize: 18,
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             'Add skills first, then upload your PDF',
             style: TextStyle(
